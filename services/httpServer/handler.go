@@ -1,11 +1,5 @@
 package httpServer
 
-import (
-	"net/http"
-)
-
 func RunServer() {
-	if err := http.ListenAndServe(":80", nil); err != nil {
-		panic(err)
-	}
+	// 后续会放一些复杂逻辑，目前没有用到
 }

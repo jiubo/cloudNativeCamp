@@ -1,12 +1,10 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"net/http"
+	"os"
 )
-
-var version = flag.String("VERSION", "1.0", "config filepath")
 
 func main() {
 	http.HandleFunc("/health", healthcheck)
@@ -17,11 +15,19 @@ func main() {
 }
 
 func healthcheck(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("ok"))
+	w.Write([]byte("200"))
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	header := r.Header
-	fmt.Print(header)
+	rHeader := r.Header
+	for k, v := range rHeader {
+		for _, value := range v {
+			w.Header().Set(k, value)
+		}
+	}
+	fmt.Println("VERSION", os.Getenv("VERSION"))
+	if os.Getenv("VERSION") != "" {
+		w.Header().Set("VERSION", os.Getenv("VERSION"))
+	}
 	fmt.Fprintln(w, "Hello World")
 }
