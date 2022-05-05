@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -15,7 +18,7 @@ func main() {
 }
 
 func healthcheck(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("200"))
+	io.WriteString(w, "ok")
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
@@ -30,4 +33,15 @@ func index(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("VERSION", os.Getenv("VERSION"))
 	}
 	fmt.Fprintln(w, "Hello World")
+	clientip := getCurrentIP(r)
+	log.Printf("Success! Response code: %d", 200)
+	log.Printf("Success! clientip: %s", clientip)
+}
+
+func getCurrentIP(r *http.Request) string {
+	ip := r.Header.Get("X-Real-IP")
+	if ip == "" {
+		ip = strings.Split(r.RemoteAddr, ":")[0]
+	}
+	return ip
 }
